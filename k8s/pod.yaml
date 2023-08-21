@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: poc-k8s-csharp
+  labels:
+    name: poc-k8s-csharp
+spec:    
+  containers:  
+  - name: poc-k8s-csharp  
+    image: poc-k8s-csharp
+    imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 80

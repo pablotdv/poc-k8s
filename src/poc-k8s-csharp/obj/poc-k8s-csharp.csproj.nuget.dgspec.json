@@ -1,0 +1,75 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/pablo/poc-k8s/src/poc-k8s-csharp/poc-k8s-csharp.csproj": {}
+  },
+  "projects": {
+    "/home/pablo/poc-k8s/src/poc-k8s-csharp/poc-k8s-csharp.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/pablo/poc-k8s/src/poc-k8s-csharp/poc-k8s-csharp.csproj",
+        "projectName": "poc-k8s-csharp",
+        "projectPath": "/home/pablo/poc-k8s/src/poc-k8s-csharp/poc-k8s-csharp.csproj",
+        "packagesPath": "/home/pablo/.nuget/packages/",
+        "outputPath": "/home/pablo/poc-k8s/src/poc-k8s-csharp/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/pablo/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "/snap/dotnet-sdk/216/sdk/7.0.306/Sdks/Microsoft.NET.Sdk.Web/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[7.0.9, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/snap/dotnet-sdk/216/sdk/7.0.306/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

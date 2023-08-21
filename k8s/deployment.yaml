@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poc-k8s-csharp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: poc-k8s-csharp
+  template:
+    metadata:
+      labels:
+        app: poc-k8s-csharp
+    spec:      
+      containers:
+      - name: poc-k8s-csharp
+        image: poc-k8s-csharp
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
