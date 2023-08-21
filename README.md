@@ -1,6 +1,8 @@
 wsl --import-in-place ubuntu-bkp Ubuntu-22.04.vhdx
 
-# Instalando o Docker https://docs.docker.com/engine/install/ubuntu/
+# Instalando o Docker 
+
+fonte: https://docs.docker.com/engine/install/ubuntu/
 
 1. atualizando e instalando pacotes
 
@@ -32,7 +34,9 @@ echo \
 sudo apt-get update
 ```
 
-# Instalando Docker https://docs.docker.com/engine/install/linux-postinstall/
+# Instalando Docker 
+
+fonte: https://docs.docker.com/engine/install/linux-postinstall/
 
 1. Instalando ultima versão do Docker e suas dependências
 
@@ -72,7 +76,9 @@ wsl --shutdown
 docker run hello-world
 ```
 
-# Instalando k8s https://minikube.sigs.k8s.io/docs/start/
+# Instalando k8s 
+
+fonte: https://minikube.sigs.k8s.io/docs/start/
 
 1. baixando e instalando o minikube
 
@@ -101,7 +107,9 @@ minikube addons enable ingress
 minikube dashboard
 ```
 
-# Instalando o kubectl https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
+# Instalando o kubectl 
+
+fonte: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/
 
 1. Baixando o binário
 
@@ -129,6 +137,31 @@ cd poc-k8s
 mkdir src/
 cd src/
 dotnet new webapi -n poc-k8s-csharp
+```
+
+Criar Dockerfile
+
+```
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+COPY ["src/poc-k8s-csharp/poc-k8s-csharp.csproj", "poc-k8s-csharp/"]
+RUN dotnet restore "poc-k8s-csharp/poc-k8s-csharp.csproj"
+COPY src/ .
+WORKDIR "/src/poc-k8s-csharp"
+RUN dotnet build "poc-k8s-csharp.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "poc-k8s-csharp.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "poc-k8s-csharp.dll"]
 ```
 
 Build da imagem
@@ -238,4 +271,99 @@ kubectl apply -f k8s/deployment.yaml
 
 ```
 kubectl port-forward deployment/poc-k8s-csharp 8080:80
+```
+
+## Criando hpa
+
+```
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: poc-k8s-csharp
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: poc-k8s-csharp
+  minReplicas: 5
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+```
+
+```
+kubectl apply -f k8s/hpa.yaml
+```
+
+# Criando service
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: poc-csharp
+spec:
+  selector:
+    app: poc-csharp
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
+```
+
+# Criando ingress
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: poc-k8s-csharp
+  labels:
+    name: poc-k8s-csharp
+spec:
+  rules:
+  - host: poc-k8s-csharp.com.br
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: poc-k8s
+            port: 
+              number: 80
+```
+
+1. Acessando ingress
+
+```
+minikube tunnel
+```
+
+2. No windows, adicionar aos hosts
+
+```
+127.0.0.1 
+```
+
+# Configurando git credentials do windows no wsl
+
+```
+git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-wincred.exe"
+```
+
+Gerando template com o helm
+
+```
+helm template charts/ > local.yaml
+```
+
+Definindo label selector no node do minikube
+```
+kubectl label nodes minikube app=......
 ```
