@@ -93,7 +93,6 @@ minikube start
 minikube addons list
 minikube addons enable metrics-server
 minikube addons enable ingress
-minikube addons enable dashboard
 ```
 
 4. Iniciando o dashboard
@@ -125,6 +124,9 @@ sudo snap install dotnet-sdk --classic
 # Criando projeto .net
 
 ```
+mkdir poc-k8s
+cd poc-k8s
+mkdir src/
 cd src/
 dotnet new webapi -n poc-k8s-csharp
 ```
@@ -142,6 +144,98 @@ docker run -p 8080:80 poc-k8s-csharp
 ```
 
 ```
-minikube image push poc-k8s-csharp
+minikube image load poc-k8s-csharp
 ```
 
+# Manipulando objetos do k8s
+
+## POD
+
+1.  Criar k8s/pod.yaml com seguinte conteúdo
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: poc-k8s-csharp
+  labels:
+    name: poc-k8s-csharp
+spec:    
+  containers:  
+  - name: poc-k8s-csharp  
+    image: poc-k8s-csharp
+    imagePullPolicy: IfNotPresent
+    resources:
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: 80
+```
+
+2. Aplicar POD no cluster
+
+```
+kubectl apply -f k8s/pod.yaml
+```
+
+3. Verificando eventos de um POD
+
+```
+kubectl get pods
+kubectl describe pod/poc-k8s-csharp
+```
+
+4. Acessando o POD criado
+
+```
+kubectl port-forward pod/poc-k8s-csharp 8080:80
+```
+
+5. Excluíndo o POD
+
+```
+kubectl delete -f k8s/pod.yaml
+```
+
+## Criando um deployment
+
+1. Criar arquivo k8s/deployment.yaml com o conteúdo
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poc-k8s-csharp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: poc-k8s-csharp
+  template:
+    metadata:
+      labels:
+        app: poc-k8s-csharp
+    spec:      
+      containers:
+      - name: poc-k8s-csharp
+        image: poc-k8s-csharp
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80
+```
+
+2. Applicando o deployment no cluster
+
+```
+kubectl apply -f k8s/deployment.yaml
+```
+
+3. Acessando o deployment
+
+```
+kubectl port-forward deployment/poc-k8s-csharp 8080:80
+```
