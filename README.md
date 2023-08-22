@@ -348,13 +348,21 @@ minikube tunnel
 2. No windows, adicionar aos hosts
 
 ```
-127.0.0.1 
+127.0.0.1 poc-k8s-csharp.com.br
 ```
 
 # Configurando git credentials do windows no wsl
 
 ```
 git config --global credential.helper "/mnt/c/Program\ Files/Git/mingw64/libexec/git-core/git-credential-wincred.exe"
+```
+
+Instalando o helm
+
+```
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
 ```
 
 Gerando template com o helm
@@ -365,5 +373,5 @@ helm template charts/ > local.yaml
 
 Definindo label selector no node do minikube
 ```
-kubectl label nodes minikube app=......
+kubectl label nodes minikube app=whatsbusiness
 ```
