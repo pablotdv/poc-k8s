@@ -1,5 +1,3 @@
-wsl --import-in-place ubuntu-bkp Ubuntu-22.04.vhdx
-
 # Instalando o Docker 
 
 fonte: https://docs.docker.com/engine/install/ubuntu/
